@@ -20,7 +20,6 @@ double getTimeTillNextHour(){
 void goToDeepSleep(){
   double timeTillNextHour = getTimeTillNextHour();
   esp_sleep_enable_timer_wakeup(timeTillNextHour * 1000000);
-  //esp_sleep_enable_timer_wakeup(10000000);
   esp_sleep_enable_ext0_wakeup(GPIO_NUM_26, 1);   //ESP wird bei Knopfdruck aufgeweckt
   Serial.println("Gehe fuer ");
   Serial.print(timeTillNextHour/60);
