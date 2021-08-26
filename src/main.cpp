@@ -6,6 +6,16 @@
 #include "TM1637.h"
 #include "deepsleep.h"
 
+#include <Wire.h>
+#include <SPI.h>
+#include <Adafruit_BMP280.h>
+
+#define BMP_SCK  (13)
+#define BMP_MISO (12)
+#define BMP_MOSI (11)
+#define BMP_CS   (10)
+
+Adafruit_BMP280 bmp;
 
 //Sensor einrichten
 #define DHTPIN 14
@@ -13,6 +23,7 @@
 DHT dht(DHTPIN, DHTTYPE);
 int temperature = 0;
 int humidity = 0;
+float pressure = 0.0;
 
 //Display einrichten
 #define CLK 33  
@@ -79,57 +90,71 @@ void ISRbuttonClicked(){
 }
 
 void setup(){
-    Serial.begin(115200);
-    tm1637.init();
-    tm1637.set(BRIGHTEST);//BRIGHT_TYPICAL = 2,BRIGHT_DARKEST = 0,BRIGHTEST = 7;
-    dht.begin();
-    pinMode(26, INPUT);
-    //attachInterrupt(26, ISRbuttonClicked, HIGH);
-    if(esp_sleep_get_wakeup_cause() == ESP_SLEEP_WAKEUP_EXT0){
-              menucycle = 0;
-              displaymenu();
-              delay(5000);
-              menucycle++;
-              displaymenu();
-              delay(5000);
-              menucycle++;
-              displaymenu();
-              delay(5000);
-              tm1637.clearDisplay();
-              tm1637.stop();
-              goToDeepSleep();
-            }
-    initWifi();
+  Serial.begin(115200);
+
+  if (!bmp.begin()) {
+  Serial.println(F("Could not find a valid BMP280 sensor, check wiring or "
+                    "try a different address!"));}
+
+  bmp.setSampling (
+    Adafruit_BMP280::MODE_NORMAL,     /* Operating Mode. */
+    Adafruit_BMP280::SAMPLING_X2,     /* Temp. oversampling */
+    Adafruit_BMP280::SAMPLING_X16,    /* Pressure oversampling */
+    Adafruit_BMP280::FILTER_X16,      /* Filtering. */
+    Adafruit_BMP280::STANDBY_MS_500
+  );
+
+  tm1637.init();
+  tm1637.set(BRIGHTEST);//BRIGHT_TYPICAL = 2,BRIGHT_DARKEST = 0,BRIGHTEST = 7;
+  dht.begin();
+  pinMode(26, INPUT);
+  attachInterrupt(26, ISRbuttonClicked, HIGH);
+  if(esp_sleep_get_wakeup_cause() == ESP_SLEEP_WAKEUP_EXT0){
+    menucycle = 0;
+    displaymenu();
+    delay(5000);
+    menucycle++;
+    displaymenu();
+    delay(5000);
+    menucycle++;
+    displaymenu();
+    delay(5000);
+    tm1637.clearDisplay();
+    tm1637.stop();
+    goToDeepSleep();
+  }
+  initWifi();
 }
 
 void loop(){
-            delay(3000);
+  delay(3000);
 
-            if(WiFi.status()==WL_CONNECTED){
-                HTTPClient http;
-                http.begin(serverName.c_str());
-                //http.addHeader("Content-Type","text/plain");
-                http.addHeader("Content-Type","application/json");
-                
-                temperature = dht.readTemperature();
-                humidity = dht.readHumidity();
+  if(WiFi.status()==WL_CONNECTED){
+    HTTPClient http;
+    http.begin(serverName.c_str());
+    //http.addHeader("Content-Type","text/plain");
+    http.addHeader("Content-Type","application/json");
+    
+    temperature = dht.readTemperature();
+    humidity = dht.readHumidity();
+    pressure = bmp.readPressure();
+    
+    char json[1024];
+    sprintf(json, "{\"temperature\" :\"%i\", \"humidity\" :\"%i\" }",temperature,humidity);
+    int httpResponseCode = http.POST(json);
 
-                char json[1024];
-                sprintf(json, "{\"temperature\" :\"%i\", \"humidity\" :\"%i\" }",temperature,humidity);
-                int httpResponseCode = http.POST(json);
-
-                if (httpResponseCode>0) {
-                    Serial.print("HTTP Response code: ");
-                    Serial.println(httpResponseCode);
-                    String payload = http.getString();
-                    Serial.println(payload);
-                }
-                else {
-                    Serial.print("Error code: ");
-                    Serial.println(httpResponseCode);
-                }
-                http.end();
-                goToDeepSleep();
-                Serial.println("Ich werde nie geschrieben!");
-            }
+    if (httpResponseCode>0) {
+        Serial.print("HTTP Response code: ");
+        Serial.println(httpResponseCode);
+        String payload = http.getString();
+        Serial.println(payload);
+    }
+    else {
+        Serial.print("Error code: ");
+        Serial.println(httpResponseCode);
+    }
+    http.end();
+    goToDeepSleep();
+    Serial.println("Ich werde nie geschrieben!");
+  }
 }
