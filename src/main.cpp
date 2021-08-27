@@ -43,6 +43,17 @@ String serverName = "http://esp32.nick_crisci.repl.co/";
 unsigned long lastTime = 0;
 unsigned long timerDelay = 1000;
 
+void displayError(int error[2]) {
+  tm1637.display(0, 14); // Display "E" for "Error"
+  tm1637.display(2, error[0]);
+  tm1637.display(3, error[1]);
+  delay(5 * 1000);
+  tm1637.clearDisplay();
+  tm1637.stop();
+  esp_sleep_enable_timer_wakeup(300 * 1000000); // Retry after 5 Minutes
+  esp_deep_sleep_start();
+}
+
 void initWifi() {
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
@@ -50,14 +61,8 @@ void initWifi() {
   delay(10 * 1000); // 10 Second Delay before Connection Error
 
   if (WiFi.status() != WL_CONNECTED) {
-    tm1637.display(2, 1);
-    tm1637.display(3, 1);
-    tm1637.display(0, 14);
-    delay(5 * 1000);
-    tm1637.clearDisplay();
-    tm1637.stop();
-    esp_sleep_enable_timer_wakeup(300 * 1000000); // Retry after 5 Minutes
-    esp_deep_sleep_start();
+    int error [2] = {1, 1};
+    displayError(error);
   }
 
   Serial.println(WiFi.localIP());
@@ -103,8 +108,9 @@ void setup(){
   Serial.begin(115200);
 
   if (!bmp.begin()) {
-  Serial.println(F("Could not find a valid BMP280 sensor, check wiring or "
-                    "try a different address!"));}
+    int error [2] = {2, 1};
+    displayError(error);
+  }
 
   bmp.setSampling (
     Adafruit_BMP280::MODE_NORMAL,     /* Operating Mode. */
