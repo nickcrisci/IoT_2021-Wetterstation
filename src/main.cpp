@@ -6,6 +6,8 @@
 #include "TM1637.h"
 #include "deepsleep.h"
 
+#include "wifi_secrets.h"
+
 #include <Wire.h>
 #include <SPI.h>
 #include <Adafruit_BMP280.h>
@@ -30,10 +32,6 @@ float pressure = 0.0;
 #define DIO 32
 TM1637 tm1637(CLK,DIO);
 
-//Wifi Config
-const char* ssid = "Das tut W-Lan";
-const char* password = "56515768934409322166";
-
 const char* ntpServer = "pool.ntp.org";
 const long  gmtOffset_sec = 0;
 const int   daylightOffset_sec = 3600;
@@ -56,7 +54,7 @@ void displayError(int error[2]) {
 
 void initWifi() {
   WiFi.mode(WIFI_STA);
-  WiFi.begin(ssid, password);
+  WiFi.begin(SSID, PASSWORD);
   Serial.print("Connecting to wifi...");
   delay(10 * 1000); // 10 Second Delay before Connection Error
 
