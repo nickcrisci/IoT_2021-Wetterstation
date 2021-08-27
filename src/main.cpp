@@ -30,8 +30,9 @@ float pressure = 0.0;
 #define DIO 32
 TM1637 tm1637(CLK,DIO);
 
-const char* ssid = "WLAN-BEAB00";
-const char* password = "0306665700636965";
+//Wifi Config
+const char* ssid = "Das tut W-Lan";
+const char* password = "56515768934409322166";
 
 const char* ntpServer = "pool.ntp.org";
 const long  gmtOffset_sec = 0;
@@ -46,10 +47,19 @@ void initWifi() {
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
   Serial.print("Connecting to wifi...");
-  while (WiFi.status() != WL_CONNECTED) {
-    Serial.print(".");
-    delay(1000);
+  delay(10 * 1000); // 10 Second Delay before Connection Error
+
+  if (WiFi.status() != WL_CONNECTED) {
+    tm1637.display(2, 1);
+    tm1637.display(3, 1);
+    tm1637.display(0, 14);
+    delay(5 * 1000);
+    tm1637.clearDisplay();
+    tm1637.stop();
+    esp_sleep_enable_timer_wakeup(300 * 1000000); // Retry after 5 Minutes
+    esp_deep_sleep_start();
   }
+
   Serial.println(WiFi.localIP());
   configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
 }
@@ -111,14 +121,11 @@ void setup(){
   attachInterrupt(26, ISRbuttonClicked, HIGH);
   if(esp_sleep_get_wakeup_cause() == ESP_SLEEP_WAKEUP_EXT0){
     menucycle = 0;
-    displaymenu();
-    delay(5000);
-    menucycle++;
-    displaymenu();
-    delay(5000);
-    menucycle++;
-    displaymenu();
-    delay(5000);
+    for (int i = 0; i < 3; i++) {
+      displaymenu();
+      delay(5000);
+      menucycle++;
+    }
     tm1637.clearDisplay();
     tm1637.stop();
     goToDeepSleep();
@@ -127,8 +134,6 @@ void setup(){
 }
 
 void loop(){
-  delay(3000);
-
   if(WiFi.status()==WL_CONNECTED){
     HTTPClient http;
     http.begin(serverName.c_str());
