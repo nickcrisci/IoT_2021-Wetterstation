@@ -10,6 +10,8 @@ Für das Projekt wurde ein ESP32 mit Bauteilen und Sensoren von Grove verwendet.
 * Grove - IMU 10DOF (v2.1)
 * Grove - 4-Digit Display (v1.0)
 * Grove - Button (v1.2)
+* Waveshare - Solar Power Manager
+* XCell - IFR 14500 (600mAh, 3.2V)
 
 ### Schaltplan
 ...
