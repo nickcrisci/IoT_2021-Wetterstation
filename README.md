@@ -1,5 +1,19 @@
 # IoT_2021-Wetterstation
 
+## Bauanleitung
+Für das Projekt wurde ein ESP32 mit Bauteilen und Sensoren von Grove verwendet. Sollten Sie andere Bauteile verwenden, kann es sein, dass Sie andere Bibliotheken benötigen.
+
+### Bauteile
+* ESP32
+* Grove Base Shield v1.0 for ESP32-DevKitC (by ThingForward)
+* Grove - Temperature and Humidity Sensor (v1.2)
+* Grove - IMU 10DOF (v2.1)
+* Grove - 4-Digit Display (v1.0)
+* Grove - Button (v1.2)
+
+### Schaltplan
+...
+
 ## Installation
 ...
 
