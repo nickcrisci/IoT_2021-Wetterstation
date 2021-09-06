@@ -30,7 +30,7 @@ Für das Projekt wurde ein ESP32 mit Bauteilen und Sensoren von Grove verwendet.
 <img src="https://cdn-reichelt.de/bilder/web/artikel_ws/A300/DEBO_SOLAR_5W_01.jpg" width="200" height="200">
 
 ### Schaltplan
-...
+<img width="1920" alt="Schaltplan" src="https://user-images.githubusercontent.com/65964109/132165112-9909c372-2904-4bb0-a2b2-2dbd50bf201b.png">
 
 ## Installation
 ...
