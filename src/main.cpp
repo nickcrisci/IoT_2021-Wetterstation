@@ -102,6 +102,12 @@ void ISRbuttonClicked(){
   }
 }
 
+float getPressureByElevation(float pressureInPa, int hoehenmeter) {
+  float pressureInHPa = pressureInPa / 100;
+  pressureInHPa = pressureInHPa - (hoehenmeter / 8); //Luftdruck nimmt um 1 hPa je 8 Meter Höhenunterschied ab
+  return pressureInHPa;
+}
+
 void setup(){
   Serial.begin(115200);
 
@@ -147,9 +153,10 @@ void loop(){
     temperature = dht.readTemperature();
     humidity = dht.readHumidity();
     pressure = bmp.readPressure();
+    pressure = getPressureByElevation(pressure, 230); //230 Höhenmeter in Bergisch Gladbach
     
     char json[1024];
-    sprintf(json, "{\"temperature\" :\"%i\", \"humidity\" :\"%i\" }",temperature,humidity);
+    sprintf(json, "{\"temperature\" :\"%i\", \"humidity\" :\"%i\", \"pressure\" :\"%i\" }",temperature,humidity, pressure);
     int httpResponseCode = http.POST(json);
 
     if (httpResponseCode>0) {
