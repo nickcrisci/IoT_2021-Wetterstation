@@ -17,6 +17,8 @@
 #define BMP_MOSI (11)
 #define BMP_CS   (10)
 
+#define ELEVATION 235 //Höhenmeter für die Luftdrucksberechnung
+
 Adafruit_BMP280 bmp;
 
 //Sensor einrichten
@@ -153,7 +155,7 @@ void loop(){
     temperature = dht.readTemperature();
     humidity = dht.readHumidity();
     pressure = bmp.readPressure();
-    pressure = getPressureByElevation(pressure, 230); //230 Höhenmeter in Bergisch Gladbach
+    pressure = getPressureByElevation(pressure, ELEVATION); //230 Höhenmeter in Bergisch Gladbach
     
     char json[1024];
     sprintf(json, "{\"temperature\" :\"%i\", \"humidity\" :\"%i\", \"pressure\" :\"%i\" }",temperature,humidity, pressure);
