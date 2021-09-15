@@ -37,6 +37,7 @@ const long  gmtOffset_sec = 0;
 const int   daylightOffset_sec = 3600;
 
 String serverName = "http://esp32.nick_crisci.repl.co/";
+// String serverName = "https://httpdump.io/wlkm1";
 
 unsigned long lastTime = 0;
 unsigned long timerDelay = 1000;
@@ -87,9 +88,8 @@ void displaymenu(){
       tm1637.display(3,15);
       break;
     case 2:
-      displayNumber(99);
-      tm1637.display(2,9);
-      tm1637.display(3,9);
+      tm1637.clearDisplay();
+      displayNumber(bmp.readPressure());
       break;
   }
 }
@@ -149,7 +149,7 @@ void loop(){
     pressure = bmp.readPressure();
     
     char json[1024];
-    sprintf(json, "{\"temperature\" :\"%i\", \"humidity\" :\"%i\" }",temperature,humidity);
+    sprintf(json, "{\"temperature\" :\"%i\", \"humidity\" :\"%i\", \"pressure\" :\"%lf\" }",temperature,humidity, pressure);
     int httpResponseCode = http.POST(json);
 
     if (httpResponseCode>0) {
