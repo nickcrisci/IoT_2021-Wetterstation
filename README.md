@@ -3,13 +3,16 @@
 ## Installation
 ...
 
-Damit die Wetterstation eine W-Lan Verbindung aufbauen kann, muss in dem Ordner "src" eine neue Datei angelegt werden.
-Diese benötigt den Namen "wifi_secrets.h". In dieser Datei werden dann die W-Lan SSID (Name) und das W-Lan Passwort festgelegt.
-Hierfür müssen folgende zwei Zeilen der Datei hinzugefügt werden:
+Damit die Wetterstation eine W-Lan Verbindung aufbauen kann, und die Abweichung des Drucksensors durch die Höhenmeter mit einbezogen werden kann, muss in dem Ordner "src" eine neue Datei angelegt werden.
+Diese benötigt den Namen "config.h". In dieser Datei werden dann die W-Lan SSID (Name) und das W-Lan Passwort, sowie die Höhenmeter am Standort der Wetterstation festgelegt.
+Hierfür müssen folgende drei Zeilen der Datei hinzugefügt werden:
 ```c
 #define SSID "Your SSID"
 #define PASSWORD "Your Password"
+#define ELEVATION <Your Elevation>
 ```
+
+Dabei muss die Angabe der Höhenmeter als Zahl in Meter angegeben werden, z.B. 200.
 
 ## Fehlercodes
 
