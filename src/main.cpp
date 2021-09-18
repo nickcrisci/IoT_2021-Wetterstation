@@ -6,7 +6,7 @@
 #include "TM1637.h"
 #include "deepsleep.h"
 
-#include "wifi_secrets.h"
+#include "config.h"
 
 #include <Wire.h>
 #include <SPI.h>
@@ -16,8 +16,6 @@
 #define BMP_MISO (12)
 #define BMP_MOSI (11)
 #define BMP_CS   (10)
-
-#define ELEVATION 235 //Höhenmeter für die Luftdrucksberechnung
 
 Adafruit_BMP280 bmp;
 
