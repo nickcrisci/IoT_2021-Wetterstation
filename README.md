@@ -33,7 +33,6 @@ Für das Projekt wurde ein ESP32 mit Bauteilen und Sensoren von Grove verwendet.
 <img width="1920" alt="Schaltplan" src="https://user-images.githubusercontent.com/65964109/133929050-08522e50-2124-457d-892b-88ee6f033694.png">
 
 ## Installation
-...
 
 Damit die Wetterstation eine W-Lan Verbindung aufbauen kann, und die Abweichung des Drucksensors durch die Höhenmeter mit einbezogen werden kann, muss in dem Ordner "src" eine neue Datei angelegt werden.
 Diese benötigt den Namen "config.h". In dieser Datei werden dann die W-Lan SSID (Name) und das W-Lan Passwort, sowie die Höhenmeter am Standort der Wetterstation festgelegt.
